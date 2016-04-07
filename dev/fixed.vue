@@ -6,7 +6,7 @@
       li First Text
   .container2
     button(@click="toggle" v-if="!fixed") Toggle
-    a(href="https://github.com/vue-comps/vue-side-nav/blob/master/dev/basic.vue") source
+    a(href="https://github.com/vue-comps/vue-side-nav/blob/master/dev/fixed.vue") source
 
 </template>
 
