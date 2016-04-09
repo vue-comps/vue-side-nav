@@ -13,12 +13,13 @@ drag-handle(
   v-bind:disabled="fixedOpened"
   v-bind:z-index="style.zIndex+1"
   )
-ul.vc-side-nav(
+ul(
   v-el:nav
   @click="dismiss | notPrevented | prevent"
   @keyup.esc="dismiss | notPrevented | prevent"
   v-bind:style="style"
-  v-bind:class="{fixed:fixed}"
+  style="transform:translateX(0)"
+  v-bind:class="[class, fixed ? 'fixed':'']"
   )
   slot No content
 </template>
@@ -36,26 +37,31 @@ module.exports =
   created: ->
     @overlay = require("vue-overlay")(@getVue())
 
-  el: -> document.createElement "div"
-
   mixins:[
     require("vue-mixins/getVue")
     require("vue-mixins/onWindowResize")
     require("vue-mixins/setCss")
+    require("vue-mixins/isOpened")
   ]
 
   props:
+    "class":
+      type: String
+      default: "side-nav"
     "width":
       type: Number
       coerce: (val = 240) ->
         parseFloat(val)
       default: 240
+    "opacity":
+      type: Number
+      default: 0.5
     "side":
       type: String
       default: "left"
-    "dismissable":
+    "notDismissible":
       type: Boolean
-      default: true
+      default: false
     "fixed":
       type: Boolean
       default: false
@@ -63,14 +69,11 @@ module.exports =
       type: Number
       coerce: (val = 992) -> parseFloat(val)
       default: 992
-    "fade":
+    "transition":
       type: Function
       default: ({el,style,cb}) ->
         @style[@side] = style[@side] + "px"
         cb()
-    "isOpened":
-      type:Boolean
-      default: false
     "isFixedOpened":
       type:Boolean
       default: false
@@ -85,9 +88,7 @@ module.exports =
       left: undefined
       right: undefined
       zIndex: 1001
-      willChange: "left,right"
       boxSizing:"border-box"
-    opened: false
     veloOpts: {duration: 300, queue: false, easing: 'easeOutQuad'}
     closeOverlay: null
     disposeWindowResize: null
@@ -96,21 +97,16 @@ module.exports =
   watch:
     "width": "processWidth"
     "fixed": "processFixed"
-    "isOpened": (val) ->
-      if val != @opened
-        if val
-          @open(false)
-        else
-          @close(false)
     "side": (val) ->
       if val == "left"
         @style.right = undefined
       else
         @style.left = undefined
       @setParentMargin()
-    "fixedOpened": ["setParentMargin","emitFixed"]
+    "fixedOpened": "emitFixed"
   methods:
     emitFixed: (fixedOpened=@fixedOpened)->
+      @setParentMargin()
       @isFixedOpened = fixedOpened
       if fixedOpened
         @$emit "fixed"
@@ -149,7 +145,7 @@ module.exports =
         @disposeWindowResize?()
         @fixedOpened = false
     dismiss: ->
-      @close() if @dismissable and not @fixedOpened
+      @close() if !@notDismissible and not @fixedOpened
 
     move: (position) ->
       @style[@side] = -@width+position+ "px"
@@ -161,7 +157,9 @@ module.exports =
       if animate
         style = {}
         style[@side] = 0
-        @fade el:@$els.nav, style:style, cb: => @$emit "opened"
+        @transition el:@$els.nav, style:style, cb: =>
+          @setCss @$els.nav, "transform", "translateX(0)"
+          @$emit "opened"
       else
         @style[@side] = 0
         @$emit "opened"
@@ -174,14 +172,16 @@ module.exports =
       if animate
         style = {}
         style[@side] = -1 * (@width + 10)
-        @fade el:@$els.nav, style:style, cb: => @$emit "closed"
+        @transition el:@$els.nav, style:style, cb: =>
+          @setCss @$els.nav, "transform", "translateX(0)"
+          @$emit "closed"
       else
         @style[@side] =  -1 * (@width + 10) + "px"
         @$emit "closed"
 
     open: (restoreOverlay) ->
       return if @opened and not restoreOverlay
-      {zIndex,close} = @overlay.open onClosed: => @close()
+      {zIndex,close} = @overlay.open opacity:@opacity, onBeforeClose: => @close()
       @style.zIndex = zIndex
       @closeOverlay = close
       @show() unless restoreOverlay
