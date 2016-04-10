@@ -2,8 +2,7 @@
 
 .container
   side-nav(:is-opened.sync="opened" v-ref:side-nav)
-    ul
-      li First Text
+    li First Text
   .container2
     button(@click="toggle") Toggle
     a(href="https://github.com/vue-comps/vue-side-nav/blob/master/dev/basic.vue") source

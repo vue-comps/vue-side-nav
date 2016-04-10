@@ -2,15 +2,15 @@
 
 for the best user-experience when navigating your side, you can use a responsive side-nav.
 
-### [See it in action](https://vue-comps.github.io/vue-side-nav)
+### [Demo](https://vue-comps.github.io/vue-side-nav)
 
 
 # Install
 
 ```sh
-npm install --save-dev vue-drag-handle vue-touch
+npm install --save-dev vue-side-nav vue-touch
 ```
-or include `build/bundle.js`
+or include `build/bundle.js`.
 
 ## Usage
 ```coffee
@@ -24,7 +24,12 @@ components:
 components:
   "side-nav": window.vueComps.sideNav
 ```
-see `dev/` folder for examples
+```html
+<side-nav>
+  <li>First Text<li>
+</side-nav>
+```
+For examples see [`dev/`](https://github.com/vue-comps/vue-side-nav/tree/master/dev).
 
 #### Props
 | Name | type | default | description |
@@ -50,12 +55,12 @@ see `dev/` folder for examples
 | unfixed | when menu get unfixed on smaller screen |
 
 # Development
-Clone repository
+Clone repository.
 ```sh
 npm install
 npm run dev
 ```
-Browse to `http://localhost:8080/`
+Browse to `http://localhost:8080/`.
 
 ## License
 Copyright (c) 2016 Paul Pflugradt
