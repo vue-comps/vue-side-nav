@@ -1,14 +1,13 @@
 // out: ..
 <template lang="jade">
 drag-handle(
-  v-el:handle
   @move="move"
   @opened="open"
   @open-aborted="hide"
   @closed="close"
   @close-aborted="show"
   v-bind:max-width="width"
-  v-bind:left="side=='left'"
+  v-bind:right="side!='left'"
   v-bind:is-opened="isOpened"
   v-bind:disabled="fixedOpened"
   v-bind:z-index="style.zIndex+1"
@@ -116,7 +115,7 @@ module.exports =
       if @$el.parentElement
         width = if @fixedOpened then @style.width else null
         for el in @$el.parentElement.children
-          if el != @$els.nav and el != @$els.handle
+          if el != @$els.nav
             @setCss(el,"margin-#{@side}",width)
     processWidth: (width=@width) ->
       @style.width = width+"px"
