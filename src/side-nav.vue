@@ -73,7 +73,7 @@ module.exports =
       default: ({el,style,cb}) ->
         @style[@side] = style[@side] + "px"
         cb()
-    "isFixedOpened":
+    "isFixed":
       type:Boolean
       default: false
 
@@ -106,7 +106,7 @@ module.exports =
   methods:
     emitFixed: (fixedOpened=@fixedOpened)->
       @setParentMargin()
-      @isFixedOpened = fixedOpened
+      @isFixed = fixedOpened
       if fixedOpened
         @$emit "fixed"
       else

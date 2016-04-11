@@ -38,8 +38,8 @@ For examples see [`dev/`](https://github.com/vue-comps/vue-side-nav/tree/master/
 | hide-on-screen-size | Number | 992 | Used with `fixed`. Above this size, the menu will stay opened. |
 | not-dismissible | Boolean | false | A click within the side-nav will not dismiss it |
 | fixed | Boolean | false | should always show on large screens |
-| is-opened | Boolean | false | can be two-way bound. opens or closes the side-nav |
-| is-fixed-opened | Boolean | false | can be two-way bound. true when fixed on large screen |
+| is-opened | Boolean | false | (two-way) opens or closes the side-nav |
+| is-fixed | Boolean | false | (two-way) true when fixed on large screen |
 | side | String | "left" | `left` or `right` |
 | transition | Function | no-transition | will be called on open and close with `{el,style,cb}`. |
 | class | String | modal | class of the `ul`|

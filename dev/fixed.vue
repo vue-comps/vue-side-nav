@@ -1,7 +1,7 @@
 <template lang="jade">
 
 .container
-  side-nav(:is-opened.sync="opened" fixed v-bind:is-fixed-opened.sync="fixed")
+  side-nav(:is-opened.sync="opened" fixed v-bind:is-fixed.sync="fixed")
     ul
       li First Text
   .container2
