@@ -2,16 +2,24 @@
 <template lang="jade">
 drag-handle(
   @move="move"
-  @opened="open"
-  @open-aborted="hide"
-  @closed="close"
-  @close-aborted="show"
-  v-bind:max-width="width"
-  v-bind:right="side!='left'"
-  v-bind:is-opened="isOpened"
-  v-bind:disabled="fixedOpened"
+  @right="open"
+  @aborted="hide"
+  v-bind:disabled="isOpened"
+  v-bind:max-right="width"
   v-bind:z-index="style.zIndex+1"
-  )
+  style="width: 20px;left:0;"
+)
+drag-handle(
+  @move="move"
+  @left="close"
+  @aborted="show"
+  v-bind:disabled="!isOpened || fixedOpened"
+  v-bind:max-left="width"
+  v-bind:offset="width"
+  v-bind:z-index="style.zIndex+1"
+  style="width: 70%;right:0;"
+  @clean-click="dismiss | notPrevented | prevent"
+)
 ul(
   v-el:nav
   @click="dismiss | notPrevented | prevent"
@@ -93,6 +101,7 @@ module.exports =
     disposeWindowResize: null
     fixedOpened: false
     wasOpened: false
+
   watch:
     "width": "processWidth"
     "fixed": "processFixed"
@@ -103,6 +112,7 @@ module.exports =
         @style.left = undefined
       @setParentMargin()
     "fixedOpened": "emitFixed"
+
   methods:
     emitFixed: (fixedOpened=@fixedOpened)->
       @setParentMargin()
@@ -152,7 +162,7 @@ module.exports =
     show: (animate = true) ->
       @opened = true
       @isOpened = true
-      @$emit "beforeOpened"
+      @$emit "before-opened"
       if animate
         style = {}
         style[@side] = 0
@@ -167,7 +177,7 @@ module.exports =
       @opened = false
       @isOpened = false
       @wasOpened = false
-      @$emit "beforeClosed"
+      @$emit "before-closed"
       if animate
         style = {}
         style[@side] = -1 * (@width + 10)

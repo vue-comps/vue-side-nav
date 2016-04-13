@@ -29,7 +29,7 @@ components:
   <li>First Text<li>
 </side-nav>
 ```
-For examples see [`dev/`](https://github.com/vue-comps/vue-side-nav/tree/master/dev).
+For examples see [`dev/`](dev/).
 
 #### Props
 | Name | type | default | description |
