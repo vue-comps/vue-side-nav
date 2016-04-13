@@ -5,7 +5,8 @@
     ul
       li First Text
   .container2
-    button(@click="toggle" v-if="!fixed") Toggle
+    button(@click="toggle" v-if="!fixed") Togglep
+    p &lt;&lt; or drag
     a(href="https://github.com/vue-comps/vue-side-nav/blob/master/dev/fixed.vue") source
 
 </template>
@@ -39,20 +40,5 @@ module.exports =
 .side-nav
   border 1px solid black
   background-color white
-.vc-drag-handle
-  &:before
-    content: "drag-handle"
-    width:5px
-    opacity 1
-    word-break:break-all
-    display block
-  &:after
-    background-color black
-    opacity 0.1
-    content ""
-    height 100%
-    width 100%
-    position absolute
-    top 0
-    left 0
+
 </style>
