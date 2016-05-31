@@ -18,12 +18,12 @@ drag-handle(
   v-bind:offset="width"
   v-bind:z-index="style.zIndex+1"
   style="width: 70%;right:0;"
-  @clean-click="dismiss | notPrevented | prevent"
+  @clean-click="dismiss"
 )
 ul(
   v-el:nav
-  @click="dismiss | notPrevented | prevent"
-  @keyup.esc="dismiss | notPrevented | prevent"
+  @click="dismiss"
+  @keyup.esc="dismiss"
   v-bind:style="style"
   style="transform:translateX(0)"
   v-bind:class="[class, fixed ? 'fixed':'']"
@@ -37,15 +37,12 @@ module.exports =
   components:
     "drag-handle": require("vue-drag-handle")
 
-  filters:
-    notPrevented: require("vue-filters/notPrevented")
-    prevent: require("vue-filters/prevent")
 
   created: ->
-    @overlay = require("vue-overlay")(@getVue())
+    @overlay = require("vue-overlay")(@Vue)
 
   mixins:[
-    require("vue-mixins/getVue")
+    require("vue-mixins/vue")
     require("vue-mixins/onWindowResize")
     require("vue-mixins/setCss")
     require("vue-mixins/isOpened")
@@ -153,8 +150,11 @@ module.exports =
       else
         @disposeWindowResize?()
         @fixedOpened = false
-    dismiss: ->
-      @close() if !@notDismissible and not @fixedOpened
+    dismiss: (e) ->
+      unless e.defaultPrevented
+        if !@notDismissible and not @fixedOpened
+          @close()
+          e.preventDefault()
 
     move: (position) ->
       @style[@side] = -@width+position+ "px"
