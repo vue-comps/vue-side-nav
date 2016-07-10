@@ -1,6 +1,7 @@
 // out: ..
 <template lang="jade">
 drag-handle(
+  v-if="!right"
   @move="move"
   @right="open"
   @aborted="hide"
@@ -10,6 +11,7 @@ drag-handle(
   style="width: 20px;left:0;"
 )
 drag-handle(
+  v-if="!right"
   @move="move"
   @left="close"
   @aborted="show"
@@ -18,6 +20,28 @@ drag-handle(
   v-bind:offset="width"
   v-bind:z-index="style.zIndex+1"
   style="width: 70%;right:0;"
+  @clean-click="dismiss"
+)
+drag-handle(
+  v-if="right"
+  @move="move"
+  @left="open"
+  @aborted="hide"
+  v-bind:disabled="isOpened"
+  v-bind:max-left="width"
+  v-bind:z-index="style.zIndex+1"
+  style="width: 20px;right:0;"
+)
+drag-handle(
+  v-if="right"
+  @move="move"
+  @right="close"
+  @aborted="show"
+  v-bind:disabled="!isOpened || fixedOpened"
+  v-bind:max-right="width"
+  v-bind:offset="width"
+  v-bind:z-index="style.zIndex+1"
+  style="width: 70%;left:0;"
   @clean-click="dismiss"
 )
 ul(
@@ -60,9 +84,9 @@ module.exports =
     "opacity":
       type: Number
       default: 0.5
-    "side":
-      type: String
-      default: "left"
+    "right":
+      type: Boolean
+      default: false
     "notDismissible":
       type: Boolean
       default: false
@@ -81,6 +105,17 @@ module.exports =
     "isFixed":
       type:Boolean
       default: false
+
+  computed:
+    side: ->
+      side = "left"
+      if @right
+        @style.left = undefined
+        side = "right"
+      else
+        @style.right = undefined
+      @setParentMargin()
+      return side
 
   data: ->
     style:
@@ -102,12 +137,6 @@ module.exports =
   watch:
     "width": "processWidth"
     "fixed": "processFixed"
-    "side": (val) ->
-      if val == "left"
-        @style.right = undefined
-      else
-        @style.left = undefined
-      @setParentMargin()
     "fixedOpened": "emitFixed"
 
   methods:
@@ -157,7 +186,8 @@ module.exports =
           e.preventDefault()
 
     move: (position) ->
-      @style[@side] = -@width+position+ "px"
+      fac = if @right then -1 else 1
+      @style[@side] = -@width+fac*position + "px"
 
     show: (animate = true) ->
       @opened = true

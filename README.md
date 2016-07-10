@@ -40,7 +40,7 @@ For examples see [`dev/`](dev/).
 | fixed | Boolean | false | should always show on large screens |
 | is-opened | Boolean | false | (two-way) opens or closes the side-nav |
 | is-fixed | Boolean | false | (two-way) true when fixed on large screen |
-| side | String | "left" | `left` or `right` |
+| right | Boolean | false | attach to the right side instead of the left (needs `overflow-x:hidden` on `<body>`) |
 | transition | Function | no-transition | will be called on open and close with `{el,style,cb}`. |
 | class | String | modal | class of the `ul`|
 
