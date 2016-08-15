@@ -143,7 +143,8 @@ module.exports =
     setParentMargin: (fixed=@isFixed,side=@side) ->
       if @$el.parentElement
         if fixed
-          width = @computedStyle[1].width
+          if @computedStyle[1]?
+            width = @computedStyle[1].width
           width ?= @computedStyle[0].width
         else
           width = null
