@@ -46,7 +46,7 @@ drag-handle(
 )
 ul(
   v-el:nav
-  @click="dismiss"
+  @click="onClick"
   @keyup.esc="dismiss"
   v-bind:style="computedStyle"
   v-bind:class="computedClass"
@@ -89,7 +89,10 @@ module.exports =
     "right":
       type: Boolean
       default: false
-    "notDismissible":
+    "notDismissable":
+      type: Boolean
+      default: false
+    "closeOnClick":
       type: Boolean
       default: false
     "fixed":
@@ -175,9 +178,12 @@ module.exports =
         @isFixed = false
         @disposeWindowResize?()
       @setParentMargin()
+    onClick: (e) ->
+      if @closeOnClick
+        @dismiss(e)
     dismiss: (e) ->
       unless e.defaultPrevented
-        if !@notDismissible and not @isFixed
+        if !@notDismissable and not @isFixed
           @close()
           e.preventDefault()
 

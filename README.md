@@ -39,7 +39,8 @@ For examples see [`dev/`](dev/).
 | ---:| --- | ---| --- |
 | width | Number | 240 | width of the side-nav |
 | hide-on-screen-size | Number | 992 | Used with `fixed`. Above this size, the menu will stay opened. |
-| not-dismissible | Boolean | false | A click within the side-nav will not dismiss it |
+| not-dismissable | Boolean | false | A click on the overlay will not dismiss it |
+| close-on-click | Boolean | false | Any click within the side-nav will close it |
 | fixed | Boolean | false | should always show on large screens |
 | is-opened | Boolean | false | (two-way) opens or closes the side-nav |
 | is-fixed | Boolean | false | (two-way) true when fixed on large screen |
@@ -65,6 +66,11 @@ npm install
 npm run dev
 ```
 Browse to `http://localhost:8080/`.
+
+## Changelog
+
+- 0.3.0
+renamed `not-dismissible` to `not-dismissable`. added `close-on-click`
 
 ## License
 Copyright (c) 2016 Paul Pflugradt
