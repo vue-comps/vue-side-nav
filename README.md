@@ -28,6 +28,9 @@ components:
 <side-nav>
   <li>First Text<li>
 </side-nav>
+<!-- silbling elements will be set to margin-left:240px for `fixed` and `is-fixed=true` -->
+<container>
+</container>
 ```
 For examples see [`dev/`](dev/).
 
@@ -40,9 +43,10 @@ For examples see [`dev/`](dev/).
 | fixed | Boolean | false | should always show on large screens |
 | is-opened | Boolean | false | (two-way) opens or closes the side-nav |
 | is-fixed | Boolean | false | (two-way) true when fixed on large screen |
-| right | Boolean | false | attach to the right side instead of the left (needs `overflow-x:hidden` on `<body>`) |
+| right | Boolean | false | attach to the right side instead of the left |
 | transition | Function | no-transition | will be called on open and close with `{el,style,cb}`. |
-| class | String | modal | class of the `ul`|
+| class | vue class | ["side-nav"] | class of the `ul`|
+| style | vue style | [] | style of the `ul`|
 
 #### Events
 | Name |  description |
@@ -51,8 +55,8 @@ For examples see [`dev/`](dev/).
 | opened | after open animation |
 | before-closed | before close animation |
 | closed |  after open animation |
-| fixed |  when menu get fixed on large screen |
-| unfixed | when menu get unfixed on smaller screen |
+| fixed | emitted when menu get fixed or unfixed on large screen. Argument is a boolean `isFixed` |
+
 
 # Development
 Clone repository.
