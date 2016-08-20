@@ -2,24 +2,24 @@
 <template lang="pug">
 drag-handle(
   @move="move"
-  @max="open(false)"
+  @max="open"
   @aborted="hide"
   v-bind:disabled="isOpened || isFixed"
   v-bind:max-right="right ? null : width"
   v-bind:max-left="right ? width : null"
-  v-bind:z-index="overlayZIndex+1"
+  v-bind:z-index="zIndex-1"
   v-bind:style="{width: '20px',left:right ? null : 0,right:right ? 0 : null}"
 )
 drag-handle(
   @move="move"
-  @max="close(false)"
+  @max="close"
   @aborted="show"
   v-bind:disabled="!isOpened || isFixed"
   v-bind:max-right="right ? width : null"
   v-bind:max-left="right ? null : width"
   v-bind:offset="right ? -width : width"
-  v-bind:z-index="overlayZIndex+1"
-  style="width: 100%"
+  v-bind:z-index="zIndex-1"
+  v-bind:style="{width: '100%',backgroundColor:'black',opacity:opacity}"
   @clean-click="dismiss"
 )
 
@@ -39,12 +39,7 @@ module.exports =
   components:
     "drag-handle": require("vue-drag-handle")
 
-
-  created: ->
-    @overlay = require("vue-overlay")(@Vue)
-
   mixins:[
-    require("vue-mixins/vue")
     require("vue-mixins/onWindowResize")
     require("vue-mixins/setCss")
     require("vue-mixins/isOpened")
@@ -65,6 +60,11 @@ module.exports =
     "opacity":
       type: Number
       default: 0.5
+      coerce: Number
+    "zIndex":
+      type: Number
+      default: 1000
+      coerce: Number
     "right":
       type: Boolean
       default: false
@@ -79,7 +79,7 @@ module.exports =
       default: false
     "hideOnScreenSize":
       type: Number
-      coerce: (val = 992) -> parseFloat(val)
+      coerce: Number
       default: 992
     "transition":
       type: Function
@@ -101,7 +101,7 @@ module.exports =
         top: 0
         margin: 0
         height: "100%"
-        zIndex: @overlayZIndex+2
+        zIndex: @zIndex
         boxSizing:"border-box"
         transform:"translateX(0)"
       if @position
@@ -113,7 +113,6 @@ module.exports =
   watch:
     fixed: "processFixed"
   data: ->
-    overlayZIndex: 1001
     position: null
 
   methods:
@@ -140,18 +139,13 @@ module.exports =
           if window.innerWidth > @hideOnScreenSize # getting bigger
             unless @isFixed
               if @isOpened
-                @close(true)
                 @wasOpened = true
               else
                 @show(false)
-
               @makeFixed(true)
           else # getting smaller
             if @isFixed
-              if @wasOpened
-                @open(true)
-              else
-                @hide(false)
+              @hide(false) unless @wasOpened
               @makeFixed(false)
       else
         @isFixed = false
@@ -199,19 +193,14 @@ module.exports =
         @setClosed()
         @$emit "closed"
 
-    open: (restoreOverlay) ->
-      return if @opened and not restoreOverlay
-      {zIndex,close} = @overlay.open opacity:@opacity, onBeforeClose: => @close()
-      @overlayZIndex = zIndex
-      @closeOverlay = close
-      @show() unless restoreOverlay
+    open: ->
+      return if @opened
+      @show()
 
 
-    close: (restoreNav) ->
+    close: ->
       return unless @opened
-      @closeOverlay?(false)
-      @closeOverlay = null
-      @hide() unless restoreNav
+      @hide()
 
     toggle: ->
       if @opened
