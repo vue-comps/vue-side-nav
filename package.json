@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "vue-overlay": "^1.0.0",
-    "vue-drag-handle": "^0.2.0",
+    "vue-drag-handle": "^1.0.1",
     "vue-mixins": "^0.2.14"
   },
   "devDependencies": {
@@ -32,7 +32,7 @@
     "karma-chai": "^0.1.0",
     "karma-chai-dom": "^1.1.0",
     "karma-chai-spies": "^0.1.4",
-    "karma-chrome-launcher": "^1.0.1",
+    "karma-chrome-launcher": "^2.0.0",
     "karma-firefox-launcher": "^1.0.0",
     "karma-mocha": "^1.1.1",
     "karma-sourcemap-loader": "^0.3.7",
@@ -42,14 +42,13 @@
     "mocha": "^3.0.2",
     "pug": "^2.0.0-beta5",
     "script-runner": "^0.1.5",
-    "template-html-loader": "0.0.3",
     "vue": "^1.0.26",
     "vue-compiler": "^0.3.0",
     "vue-dev-server": "^0.2.10",
     "vue-html-loader": "^1.2.3",
     "vue-loader": "^8.5.3",
     "vue-touch": "^1.1.0",
-    "webpack": "^1.13.1"
+    "webpack": "^1.13.2"
   },
   "keywords": [
     "side-nav",
@@ -61,7 +60,7 @@
     "build:webpack": "webpack --config build/webpack.config.coffee",
     "build": "run-npm build:*",
     "dev": "vue-dev-server",
-    "watch": "karma start --browsers Chrome --auto-watch --reporters spec",
+    "watch": "karma start --browsers Chromium --auto-watch --reporters spec",
     "test": "karma start --single-run",
     "preversion": "npm test",
     "version": "npm run build && git add .",

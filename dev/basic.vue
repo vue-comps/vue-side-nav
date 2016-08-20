@@ -31,5 +31,5 @@ module.exports =
     toggle: ->
       @opened = !@opened
   components:
-    "side-nav": require "../side-nav.js"
+    "side-nav": require "../src/side-nav.vue"
 </script>

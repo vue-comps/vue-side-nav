@@ -1,49 +1,28 @@
 // out: ..
 <template lang="pug">
 drag-handle(
-  v-if="!right"
   @move="move"
-  @right="open"
+  @max="open(false)"
   @aborted="hide"
   v-bind:disabled="isOpened || isFixed"
-  v-bind:max-right="width"
+  v-bind:max-right="right ? null : width"
+  v-bind:max-left="right ? width : null"
   v-bind:z-index="overlayZIndex+1"
-  style="width: 20px;left:0;"
+  v-bind:style="{width: '20px',left:right ? null : 0,right:right ? 0 : null}"
 )
 drag-handle(
-  v-if="!right"
   @move="move"
-  @left="close"
+  @max="close(false)"
   @aborted="show"
   v-bind:disabled="!isOpened || isFixed"
-  v-bind:max-left="width"
-  v-bind:offset="width"
+  v-bind:max-right="right ? width : null"
+  v-bind:max-left="right ? null : width"
+  v-bind:offset="right ? -width : width"
   v-bind:z-index="overlayZIndex+1"
-  style="width: 70%;right:0;"
+  style="width: 100%"
   @clean-click="dismiss"
 )
-drag-handle(
-  v-if="right"
-  @move="move"
-  @left="open"
-  @aborted="hide"
-  v-bind:disabled="isOpened || isFixed"
-  v-bind:max-left="width"
-  v-bind:z-index="overlayZIndex+1"
-  style="width: 20px;right:0;"
-)
-drag-handle(
-  v-if="right"
-  @move="move"
-  @right="close"
-  @aborted="show"
-  v-bind:disabled="!isOpened || isFixed"
-  v-bind:max-right="width"
-  v-bind:offset="width"
-  v-bind:z-index="overlayZIndex+1"
-  style="width: 70%;left:0;"
-  @clean-click="dismiss"
-)
+
 ul(
   v-el:nav
   @click="onClick"
@@ -122,7 +101,7 @@ module.exports =
         top: 0
         margin: 0
         height: "100%"
-        zIndex: @overlayZIndex
+        zIndex: @overlayZIndex+2
         boxSizing:"border-box"
         transform:"translateX(0)"
       if @position
