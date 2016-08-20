@@ -24,6 +24,7 @@ drag-handle(
 )
 
 ul(
+  v-bind:id="id"
   v-el:nav
   @click="onClick"
   @keyup.esc="dismiss"
@@ -48,6 +49,8 @@ module.exports =
   ]
 
   props:
+    "id":
+      type: String
     "class":
       default: -> ["side-nav"]
     "style":

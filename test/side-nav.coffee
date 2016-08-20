@@ -1,7 +1,6 @@
 env = null
 describe "side-nav", ->
 
-
   describe "basic env", ->
 
     before ->

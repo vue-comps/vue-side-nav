@@ -19,12 +19,9 @@
 module.exports =
   mixins:[
     require("vue-mixins/vue")
-    require("vue-mixins/setCss")
-
   ]
   beforeCompile: ->
     @Vue.use(require('vue-touch'))
-    @setCss document.body, "margin",0
   data: ->
     opened: false
   methods:
