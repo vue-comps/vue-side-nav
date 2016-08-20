@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "vue-drag-handle": "^1.0.1",
+    "vue-overlay": "^1.0.0",
     "vue-mixins": "^0.2.14"
   },
   "devDependencies": {
