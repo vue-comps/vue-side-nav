@@ -115,6 +115,7 @@ module.exports =
       return style
   watch:
     fixed: "processFixed"
+    hideOnScreenSize: "processFixed"
   data: ->
     position: null
 
