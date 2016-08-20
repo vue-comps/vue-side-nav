@@ -119,9 +119,10 @@ describe "side-nav", ->
 
     describe "fixed", ->
       before (done) ->
+        nav.isOpened = false
         nav.right = false
         nav.fixed = true
-        nav.hideOnScreenSize = 100
+        nav.fixedScreenSize = 100
         env.$nextTick -> done()
 
       it "should be there on start", ->
@@ -131,8 +132,8 @@ describe "side-nav", ->
         box.left.should.equal 0, "sidenav"
         navel.parentElement.children[0].should.equal navel
 
-      it "should be hidden when screen is small", ->
-        nav.hideOnScreenSize = 10000
+      it "should be hidden when screen is small", (done) ->
+        nav.fixedScreenSize = 10000
         env.$nextTick ->
           nav.isOpened.should.be.false
           nav.isFixed.should.be.false
@@ -142,3 +143,4 @@ describe "side-nav", ->
           box = navel.parentElement.children[0].getBoundingClientRect()
           box.left.should.be.above -1, "drag-handle"
           box.width.should.be.above 0, "drag-handle"
+          done()

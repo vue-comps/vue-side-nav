@@ -35,28 +35,30 @@ components:
 For examples see [`dev/`](dev/).
 
 #### Props
-| Name | type | default | description |
-| ---:| --- | ---| --- |
-| width | Number | 240 | width of the side-nav |
-| hide-on-screen-size | Number | 992 | Used with `fixed`. Above this size, the menu will stay opened. |
-| not-dismissable | Boolean | false | A click on the overlay will not dismiss it |
-| close-on-click | Boolean | false | Any click within the side-nav will close it |
-| fixed | Boolean | false | should always show on large screens |
-| is-opened | Boolean | false | (two-way) opens or closes the side-nav |
-| is-fixed | Boolean | false | (two-way) true when fixed on large screen |
-| right | Boolean | false | attach to the right side instead of the left |
-| transition | Function | no-transition | will be called on open and close with `{el,style,cb}`. |
-| class | vue class | ["side-nav"] | class of the `ul`|
-| style | vue style | [] | style of the `ul`|
+Name | type | default | description
+---:| --- | ---| ---
+width | Number | 240 | width of the side-nav
+fixed-screen-size | Number | 992 | Used with `fixed`. Above this size, the menu will stay opened.
+not-dismissable | Boolean | false | A click on the overlay will not dismiss it
+close-on-click | Boolean | false | Any click within the side-nav will close it
+fixed | Boolean | false | should always show on large screens
+is-opened | Boolean | false | (two-way) opens or closes the side-nav
+is-fixed | Boolean | false | (two-way) true when fixed on large screen
+right | Boolean | false | attach to the right side instead of the left
+transition | Function | no-transition | will be called on open and close with `{el,style,cb}`.
+class | vue class | ["side-nav"] | class of the `ul`
+style | vue style | [] | style of the `ul`
+id | String | - | id of the `ul`
+opacity | Number | 0.5 | opacity of the overlay
 
 #### Events
-| Name |  description |
-| ---:| --- |
-| before-opened | before open animation |
-| opened | after open animation |
-| before-closed | before close animation |
-| closed |  after open animation |
-| fixed | emitted when menu get fixed or unfixed on large screen. Argument is a boolean `isFixed` |
+Name |  description
+ ---:| ---
+before-opened | before open animation
+opened | after open animation
+before-closed | before close animation
+closed |  after open animation
+fixed | emitted when menu get fixed or unfixed on large screen. Argument is a boolean `isFixed`
 
 
 # Development
@@ -68,6 +70,8 @@ npm run dev
 Browse to `http://localhost:8080/`.
 
 ## Changelog
+- 1.0.0
+renamed `hide-on-screen-size` to `fixed-screen-size`
 
 - 0.3.0
 renamed `not-dismissible` to `not-dismissable`. added `close-on-click`

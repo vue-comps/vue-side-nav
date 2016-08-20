@@ -2,24 +2,24 @@
 <template lang="pug">
 drag-handle(
   @move="move"
-  @max="open"
+  @max="open(false)"
   @aborted="hide"
   v-bind:disabled="isOpened || isFixed"
   v-bind:max-right="right ? null : width"
   v-bind:max-left="right ? width : null"
-  v-bind:z-index="zIndex-1"
+  v-bind:z-index="overlayZIndex+1"
   v-bind:style="{width: '20px',left:right ? null : 0,right:right ? 0 : null}"
 )
 drag-handle(
   @move="move"
-  @max="close"
+  @max="close(false)"
   @aborted="show"
   v-bind:disabled="!isOpened || isFixed"
   v-bind:max-right="right ? width : null"
   v-bind:max-left="right ? null : width"
   v-bind:offset="right ? -width : width"
-  v-bind:z-index="zIndex-1"
-  v-bind:style="{width: '100%',backgroundColor:'black',opacity:opacity}"
+  v-bind:z-index="overlayZIndex+1"
+  v-bind:style="{left:0,right:0}"
   @clean-click="dismiss"
 )
 
@@ -40,7 +40,11 @@ module.exports =
   components:
     "drag-handle": require("vue-drag-handle")
 
+  created: ->
+    @overlay = require("vue-overlay")(@Vue)
+
   mixins:[
+    require("vue-mixins/vue")
     require("vue-mixins/onWindowResize")
     require("vue-mixins/setCss")
     require("vue-mixins/isOpened")
@@ -57,16 +61,11 @@ module.exports =
       default: -> []
     "width":
       type: Number
-      coerce: (val = 240) ->
-        parseFloat(val)
+      coerce: Number
       default: 240
     "opacity":
       type: Number
       default: 0.5
-      coerce: Number
-    "zIndex":
-      type: Number
-      default: 1000
       coerce: Number
     "right":
       type: Boolean
@@ -80,14 +79,14 @@ module.exports =
     "fixed":
       type: Boolean
       default: false
-    "hideOnScreenSize":
+    "fixedScreenSize":
       type: Number
       coerce: Number
       default: 992
     "transition":
       type: Function
       default: ({el,style,cb}) ->
-        @mergeStyle[@side] = style[@side] + "px"
+        @position = style[@side] + "px"
         cb()
     "isFixed":
       type:Boolean
@@ -95,7 +94,6 @@ module.exports =
 
   computed:
     side: -> if @right then "right" else "left"
-    otherSide: -> if @right then "left" else "right"
     mergeClass: -> fixed: @fixed
     mergeStyle: ->
       style =
@@ -104,21 +102,18 @@ module.exports =
         top: 0
         margin: 0
         height: "100%"
-        zIndex: @zIndex
+        zIndex: @overlayZIndex+2
         boxSizing:"border-box"
         transform:"translateX(0)"
       if @position
         style[@side] = @position
-      else
-        style[@side] = if @isOpened or @isFixed  then 0 else -1 * (@width + 10) + "px"
-      style[@otherSide] = null
       return style
   watch:
     fixed: "processFixed"
-    hideOnScreenSize: "processFixed"
+    fixedScreenSize: "processFixed"
   data: ->
-    position: null
-
+    position: -1 * (@width + 10) + "px"
+    overlayZIndex: 1001
   methods:
     makeFixed: (fixed)->
       if fixed != @isFixed
@@ -138,18 +133,27 @@ module.exports =
             @setCss(el,"margin-#{side}",width)
     processFixed: ->
       if @fixed
-        @makeFixed(window.innerWidth > @hideOnScreenSize)
+        isFixed = window.innerWidth > @fixedScreenSize
+        @makeFixed(isFixed)
+        if isFixed
+          @position = 0
+        else
+          @position = -1 * (@width + 10) + "px"
         @disposeWindowResize = @onWindowResize =>
-          if window.innerWidth > @hideOnScreenSize # getting bigger
+          if window.innerWidth > @fixedScreenSize # getting bigger
             unless @isFixed
               if @isOpened
+                @close(true)
                 @wasOpened = true
               else
                 @show(false)
               @makeFixed(true)
           else # getting smaller
             if @isFixed
-              @hide(false) unless @wasOpened
+              if @wasOpened
+                @open(true)
+              else
+                @hide(false)
               @makeFixed(false)
       else
         @isFixed = false
@@ -170,7 +174,6 @@ module.exports =
 
     show: (animate = true) ->
       @$emit "before-opened"
-      @position = 0
       if animate
         style = {}
         style[@side] = 0
@@ -179,32 +182,37 @@ module.exports =
           @setOpened()
           @$emit "opened"
       else
+        @position = 0
         @setOpened()
         @$emit "opened"
 
     hide: (animate = true) ->
-      @position = 0
       @wasOpened = false
       @$emit "before-closed"
       if animate
         style = {}
         style[@side] = -1 * (@width + 10)
         @transition el:@$els.nav, style:style, cb: =>
-          @setCss @$els.nav, "transform", "translateX(0)"
+
           @setClosed()
           @$emit "closed"
       else
+        @position = -1 * (@width + 10) + "px"
         @setClosed()
         @$emit "closed"
 
-    open: ->
-      return if @opened
-      @show()
+    open: (restoreOverlay) ->
+      return if @opened and not restoreOverlay
+      {zIndex,close} = @overlay.open opacity:@opacity, onBeforeClose: => @close()
+      @overlayZIndex = zIndex
+      @closeOverlay = close
+      @show() unless restoreOverlay
 
-
-    close: ->
+    close: (restoreNav) ->
       return unless @opened
-      @hide()
+      @closeOverlay?(false)
+      @closeOverlay = null
+      @hide() unless restoreNav
 
     toggle: ->
       if @opened
