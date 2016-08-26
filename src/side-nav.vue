@@ -7,7 +7,7 @@ drag-handle(
   v-bind:disabled="isOpened || isFixed"
   v-bind:max-right="right ? null : width"
   v-bind:max-left="right ? width : null"
-  v-bind:z-index="overlayZIndex+1"
+  v-bind:z-index="overlayZIndex"
   v-bind:style="{width: '20px',left:right ? null : 0,right:right ? 0 : null}"
 )
 drag-handle(
@@ -18,7 +18,7 @@ drag-handle(
   v-bind:max-right="right ? width : null"
   v-bind:max-left="right ? null : width"
   v-bind:offset="right ? -width : width"
-  v-bind:z-index="overlayZIndex+1"
+  v-bind:z-index="overlayZIndex"
   v-bind:style="{left:0,right:0}"
   @clean-click="dismiss"
 )
@@ -91,6 +91,10 @@ module.exports =
     "isFixed":
       type:Boolean
       default: false
+    "zIndex":
+      type:Number
+      default: 1000
+      coerce:Number
 
   computed:
     side: -> if @right then "right" else "left"
@@ -102,7 +106,7 @@ module.exports =
         top: 0
         margin: 0
         height: "100%"
-        zIndex: @overlayZIndex+2
+        zIndex: @overlayZIndex+1
         boxSizing:"border-box"
         transform:"translateX(0)"
       if @position
@@ -203,7 +207,7 @@ module.exports =
 
     open: (restoreOverlay) ->
       return if @opened and not restoreOverlay
-      {zIndex,close} = @overlay.open opacity:@opacity, onBeforeClose: => @close()
+      {zIndex,close} = @overlay.open zIndex:@zIndex, opacity:@opacity, onBeforeClose: => @close()
       @overlayZIndex = zIndex
       @closeOverlay = close
       @show() unless restoreOverlay

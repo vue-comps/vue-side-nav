@@ -50,6 +50,7 @@ class | vue class | ["side-nav"] | class of the `ul`
 style | vue style | [] | style of the `ul`
 id | String | - | id of the `ul`
 opacity | Number | 0.5 | opacity of the overlay
+zIndex | Number | 1000 | minimum zIndex of the overlay, cannot be lower than 100 (see [vue-overlay](https://github.com/vue-comps/vue-overlay) for specifics)
 
 #### Events
 Name |  description
