@@ -219,10 +219,13 @@ module.exports =
       @hide() unless restoreNav
 
     toggle: ->
-      if @opened
-        @close()
+      if @isFixed # disable opening when fixed
+        @isOpened = @opened
       else
-        @open()
+        if @opened
+          @close()
+        else
+          @open()
 
   ready: ->
     @processFixed()
