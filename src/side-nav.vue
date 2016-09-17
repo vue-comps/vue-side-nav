@@ -177,49 +177,52 @@ module.exports =
       @position = -@width+fac*position + "px"
 
     show: (animate = true) ->
-      @$emit "before-opened"
+      @$emit "before-enter"
       if animate
         style = {}
         style[@side] = 0
         @transition el:@$els.nav, style:style, cb: =>
           @setCss @$els.nav, "transform", "translateX(0)"
           @setOpened()
-          @$emit "opened"
+          @$emit "after-enter"
       else
         @position = 0
         @setOpened()
-        @$emit "opened"
+        @$emit "after-enter"
 
     hide: (animate = true) ->
       @wasOpened = false
-      @$emit "before-closed"
+      @$emit "before-leave"
       if animate
         style = {}
         style[@side] = -1 * (@width + 10)
         @transition el:@$els.nav, style:style, cb: =>
-
           @setClosed()
-          @$emit "closed"
+          @$emit "after-leave"
       else
         @position = -1 * (@width + 10) + "px"
         @setClosed()
-        @$emit "closed"
+        @$emit "after-leave"
 
     open: (restoreOverlay) ->
       return if @opened and not restoreOverlay
       {zIndex,close} = @overlay.open zIndex:@zIndex, opacity:@opacity, onBeforeClose: => @close()
       @overlayZIndex = zIndex
       @closeOverlay = close
-      @show() unless restoreOverlay
+      unless restoreOverlay
+        @show()
+        @$emit "toggled", true
 
     close: (restoreNav) ->
       return unless @opened
       @closeOverlay?(false)
       @closeOverlay = null
-      @hide() unless restoreNav
+      unless restoreNav
+        @hide()
+        @$emit "toggled", false
 
     toggle: ->
-      if @isFixed # disable opening when fixed
+      if @isFixed # disable opening
         @isOpened = @opened
       else
         if @opened

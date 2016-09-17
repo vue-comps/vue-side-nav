@@ -43,24 +43,49 @@ not-dismissable | Boolean | false | A click on the overlay will not dismiss it
 close-on-click | Boolean | false | Any click within the side-nav will close it
 fixed | Boolean | false | should always show on large screens
 is-opened | Boolean | false | (two-way) opens or closes the side-nav
-is-fixed | Boolean | false | (two-way) true when fixed on large screen
+is-fixed | Boolean | false | (two-way / read-only) true when fixed on large screen
 right | Boolean | false | attach to the right side instead of the left
 transition | Function | no-transition | will be called on open and close with `{el,style,cb}`.
 class | vue class | ["side-nav"] | class of the `ul`
 style | vue style | [] | style of the `ul`
 id | String | - | id of the `ul`
 opacity | Number | 0.5 | opacity of the overlay
-zIndex | Number | 1000 | minimum zIndex of the overlay, cannot be lower than 100 (see [vue-overlay](https://github.com/vue-comps/vue-overlay) for specifics)
+z-index | Number | 1000 | minimum zIndex of the overlay, cannot be lower than 100 (see [vue-overlay](https://github.com/vue-comps/vue-overlay) for specifics)
+
+Menu will be visibile when either is-fixed or is-opened is true.
 
 #### Events
 Name |  description
- ---:| ---
-before-opened | before open animation
-opened | after open animation
-before-closed | before close animation
-closed |  after open animation
-fixed | emitted when menu get fixed or unfixed on large screen. Argument is a boolean `isFixed`
+---:| ---
+before-enter | will be called before open animation
+after-enter |  will be called when opened
+before-leave |  will be called before close animation
+after-leave |  will be called when closed
+fixed(isFixed:Boolean) | emitted when menu get fixed or unfixed on large screen. Alternative to use two-way `is-fixed` prop
+toggled(isOpened:Boolean) | emitted when menu gets opened or closed. Alternative to use two-way `is-opened` prop
 
+#### Transition
+
+You can provide a vue transition like this:
+```js
+Velocity = require("velocity-animate")
+
+template: "<modal transition='moveIn'></modal>",
+methods:{
+  moveIn: function ({el,style,cb}) {
+    Velocity el, "stop"
+    Velocity el, style, {
+      duration: 300,
+      queue: false,
+      easing: 'easeOutQuad',
+      complete: cb
+    }
+  }
+}
+```
+
+The background is managed by `vue-overlay`.
+See [here](https://github.com/vue-comps/vue-overlay#overlayfadeelopacitycb) for an example on how to change its fading function.
 
 # Development
 Clone repository.
@@ -71,11 +96,19 @@ npm run dev
 Browse to `http://localhost:8080/`.
 
 ## Changelog
-- 1.0.0
-renamed `hide-on-screen-size` to `fixed-screen-size`
 
-- 0.3.0
-renamed `not-dismissible` to `not-dismissable`. added `close-on-click`
+- 1.1.0  
+events are renamed after vue transitions  
+added toggled event  
+
+- 1.0.1  
+added `z-index` prop  
+
+- 1.0.0  
+renamed `hide-on-screen-size` to `fixed-screen-size`  
+
+- 0.3.0  
+renamed `not-dismissible` to `not-dismissable`. added `close-on-click`  
 
 ## License
 Copyright (c) 2016 Paul Pflugradt
