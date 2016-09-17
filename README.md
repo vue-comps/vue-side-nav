@@ -28,7 +28,7 @@ components:
 <side-nav>
   <li>First Text<li>
 </side-nav>
-<!-- silbling elements will be set to margin-left:240px for `fixed` and `is-fixed=true` -->
+<!-- sibling elements will be set to margin-left:240px for `fixed` and `is-fixed=true` -->
 <container>
 </container>
 ```
