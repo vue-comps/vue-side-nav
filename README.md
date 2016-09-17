@@ -87,14 +87,6 @@ methods:{
 The background is managed by `vue-overlay`.
 See [here](https://github.com/vue-comps/vue-overlay#overlayfadeelopacitycb) for an example on how to change its fading function.
 
-# Development
-Clone repository.
-```sh
-npm install
-npm run dev
-```
-Browse to `http://localhost:8080/`.
-
 ## Changelog
 
 - 1.1.0  
@@ -109,6 +101,14 @@ renamed `hide-on-screen-size` to `fixed-screen-size`
 
 - 0.3.0  
 renamed `not-dismissible` to `not-dismissable`. added `close-on-click`  
+
+# Development
+Clone repository.
+```sh
+npm install
+npm run dev
+```
+Browse to `http://localhost:8080/`.
 
 ## License
 Copyright (c) 2016 Paul Pflugradt
