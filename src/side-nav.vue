@@ -211,7 +211,6 @@ module.exports =
       @closeOverlay = close
       unless restoreOverlay
         @show()
-        @$emit "toggled", true
 
     close: (restoreNav) ->
       return unless @opened
@@ -219,7 +218,6 @@ module.exports =
       @closeOverlay = null
       unless restoreNav
         @hide()
-        @$emit "toggled", false
 
     toggle: ->
       if @isFixed # disable opening
