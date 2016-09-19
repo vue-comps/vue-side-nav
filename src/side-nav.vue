@@ -31,7 +31,7 @@ ul(
   v-bind:style="computedStyle"
   v-bind:class="computedClass"
   )
-  slot No content
+  slot
 </template>
 
 <script lang="coffee">
@@ -53,45 +53,45 @@ module.exports =
   ]
 
   props:
-    "id":
+    id:
       type: String
-    "class":
+    class:
       default: -> ["side-nav"]
-    "style":
+    style:
       default: -> []
-    "width":
+    width:
       type: Number
       coerce: Number
       default: 240
-    "opacity":
+    opacity:
       type: Number
       default: 0.5
       coerce: Number
-    "right":
+    right:
       type: Boolean
       default: false
-    "notDismissable":
+    notDismissable:
       type: Boolean
       default: false
-    "closeOnClick":
+    closeOnClick:
       type: Boolean
       default: false
-    "fixed":
+    fixed:
       type: Boolean
       default: false
-    "fixedScreenSize":
+    fixedScreenSize:
       type: Number
       coerce: Number
       default: 992
-    "transition":
+    transition:
       type: Function
       default: ({el,style,cb}) ->
         @position = style[@side] + "px"
         cb()
-    "isFixed":
+    isFixed:
       type:Boolean
       default: false
-    "zIndex":
+    zIndex:
       type:Number
       default: 1000
       coerce:Number
@@ -230,4 +230,7 @@ module.exports =
 
   ready: ->
     @processFixed()
+
+  beforeDestory: ->
+    @closeOverlay?()
 </script>
