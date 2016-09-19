@@ -19,7 +19,7 @@
   "dependencies": {
     "vue-drag-handle": "^1.0.1",
     "vue-overlay": "^1.0.1",
-    "vue-mixins": "^0.2.18"
+    "vue-mixins": "^0.3.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
