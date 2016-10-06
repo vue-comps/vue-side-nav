@@ -66,11 +66,11 @@ toggled(isOpened:Boolean) | emitted when menu gets opened or closed. Alternative
 
 #### Transition
 
-You can provide a vue transition like this:
+You can provide a transition like this:
 ```js
 Velocity = require("velocity-animate")
 
-template: "<modal transition='moveIn'></modal>",
+template: "<side-nav transition='moveIn'></side-nav>",
 methods:{
   moveIn: function ({el,style,cb}) {
     Velocity el, "stop"
@@ -88,6 +88,8 @@ The background is managed by `vue-overlay`.
 See [here](https://github.com/vue-comps/vue-overlay#overlayfadeelopacitycb) for an example on how to change its fading function.
 
 ## Changelog
+-  
+close overlay on destroy  
 
 - 1.1.0  
 events are renamed after vue transitions  
