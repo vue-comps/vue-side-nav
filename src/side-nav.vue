@@ -1,37 +1,38 @@
 // out: ..
 <template lang="pug">
-drag-handle(
-  @move="move"
-  @max="open(false)"
-  @aborted="hide"
-  v-bind:disabled="isOpened || isFixed"
-  v-bind:max-right="right ? null : width"
-  v-bind:max-left="right ? width : null"
-  v-bind:z-index="overlayZIndex"
-  v-bind:style="{width: '20px',left:right ? null : 0,right:right ? 0 : null}"
-)
-drag-handle(
-  @move="move"
-  @max="close(false)"
-  @aborted="show"
-  v-bind:disabled="!isOpened || isFixed"
-  v-bind:max-right="right ? width : null"
-  v-bind:max-left="right ? null : width"
-  v-bind:offset="right ? -width : width"
-  v-bind:z-index="overlayZIndex"
-  v-bind:style="{left:0,right:0}"
-  @clean-click="dismiss"
-)
-
-ul(
-  v-bind:id="id"
-  v-el:nav
-  @click="onClick"
-  @keyup.esc="dismiss"
-  v-bind:style="computedStyle"
-  v-bind:class="computedClass"
+div
+  drag-handle(
+    @move="move"
+    @max="open(false)"
+    @aborted="hide"
+    v-bind:disabled="opened || isFixed"
+    v-bind:max-right="right ? null : width"
+    v-bind:max-left="right ? width : null"
+    v-bind:z-index="overlayZIndex"
+    v-bind:style="{width: '20px',left:right ? null : '0',right:right ? '0' : null}"
   )
-  slot
+  drag-handle(
+    @move="move"
+    @max="close(false)"
+    @aborted="show"
+    v-bind:disabled="!opened || isFixed"
+    v-bind:max-right="right ? width : null"
+    v-bind:max-left="right ? null : width"
+    v-bind:offset="right ? -width : width"
+    v-bind:z-index="overlayZIndex"
+    v-bind:style="{left:'0',right:'0'}"
+    @clean-click="dismiss"
+  )
+
+  ul(
+    v-bind:id="id"
+    ref="nav"
+    @click="onClick"
+    @keyup.esc="dismiss"
+    v-bind:style="computedStyle"
+    v-bind:class="computedClass"
+    )
+    slot
 </template>
 
 <script lang="coffee">
@@ -47,7 +48,7 @@ module.exports =
     require("vue-mixins/vue")
     require("vue-mixins/onWindowResize")
     require("vue-mixins/setCss")
-    require("vue-mixins/isOpened")
+    require("vue-mixins/isOpened2")
     require("vue-mixins/class")
     require("vue-mixins/style")
   ]
@@ -86,11 +87,8 @@ module.exports =
     transition:
       type: Function
       default: ({el,style,cb}) ->
-        @position = style[@side] + "px"
+        @position = style[@side].replace("px","")
         cb()
-    isFixed:
-      type:Boolean
-      default: false
     zIndex:
       type:Number
       default: 1000
@@ -98,55 +96,60 @@ module.exports =
 
   computed:
     side: -> if @right then "right" else "left"
+    otherSide: -> if @right then "left" else "right"
     mergeClass: -> fixed: @fixed
     mergeStyle: ->
       style =
         position: "fixed"
         width: @width + "px"
-        top: 0
-        margin: 0
+        top: "0"
+        margin: "0"
         height: "100%"
         zIndex: @overlayZIndex+1
         boxSizing:"border-box"
         transform:"translateX(0)"
-      if @position
-        style[@side] = @position
+      style[@side] = @position + "px"
       return style
+    realWidth: ->
+      if @computedStyle[1]?
+        width = @computedStyle[1].width
+      width ?= @computedStyle[0].width
+      return width
   watch:
     fixed: "processFixed"
     fixedScreenSize: "processFixed"
+    side: "setParentMargin"
   data: ->
-    position: -1 * (@width + 10) + "px"
+    isFixed: null
+    position: -1 * (@width + 10)
     overlayZIndex: 1001
   methods:
-    makeFixed: (fixed)->
+    makeFixed: (fixed) ->
       if fixed != @isFixed
         @isFixed = fixed
-        @setParentMargin(fixed)
+        @setParentMargin()
         @$emit "fixed", fixed
-    setParentMargin: (fixed=@isFixed,side=@side) ->
+    setParentMargin: ->
       if @$el.parentElement
-        if fixed
-          if @computedStyle[1]?
-            width = @computedStyle[1].width
-          width ?= @computedStyle[0].width
+        if @isFixed
+          width = @realWidth
         else
           width = null
         for el in @$el.parentElement.children
-          if el != @$els.nav
-            @setCss(el,"margin-#{side}",width)
+          if el != @$el
+            @setCss(el,"margin-#{@side}",width)
+            @setCss(el,"margin-#{@otherSide}",null)
     processFixed: ->
       if @fixed
-        isFixed = window.innerWidth > @fixedScreenSize
-        @makeFixed(isFixed)
-        if isFixed
+        @makeFixed(window.innerWidth > @fixedScreenSize)
+        if @isFixed
           @position = 0
         else
-          @position = -1 * (@width + 10) + "px"
+          @position = -1 * (@width + 10)
         @disposeWindowResize = @onWindowResize =>
           if window.innerWidth > @fixedScreenSize # getting bigger
             unless @isFixed
-              if @isOpened
+              if @opened
                 @close(true)
                 @wasOpened = true
               else
@@ -160,7 +163,11 @@ module.exports =
                 @hide(false)
               @makeFixed(false)
       else
-        @isFixed = false
+        @makeFixed(false)
+        if @opened
+          @position = 0
+        else
+          @position = -1 * (@width + 10)
         @disposeWindowResize?()
       @setParentMargin()
     onClick: (e) ->
@@ -174,15 +181,15 @@ module.exports =
 
     move: (position) ->
       fac = if @right then -1 else 1
-      @position = -@width+fac*position + "px"
+      @position = -@width+fac*position
 
     show: (animate = true) ->
       @$emit "before-enter"
       if animate
         style = {}
-        style[@side] = 0
-        @transition el:@$els.nav, style:style, cb: =>
-          @setCss @$els.nav, "transform", "translateX(0)"
+        style[@side] = "0"
+        @transition el:@$refs.nav, style:style, cb: =>
+          @setCss @$refs.nav, "transform", "translateX(0)"
           @setOpened()
           @$emit "after-enter"
       else
@@ -195,12 +202,12 @@ module.exports =
       @$emit "before-leave"
       if animate
         style = {}
-        style[@side] = -1 * (@width + 10)
-        @transition el:@$els.nav, style:style, cb: =>
+        style[@side] = -1 * (@width + 10) + "px"
+        @transition el:@$refs.nav, style:style, cb: =>
           @setClosed()
           @$emit "after-leave"
       else
-        @position = -1 * (@width + 10) + "px"
+        @position = -1 * (@width + 10)
         @setClosed()
         @$emit "after-leave"
 
@@ -221,14 +228,14 @@ module.exports =
 
     toggle: ->
       if @isFixed # disable opening
-        @isOpened = @opened
+        @opened = @isOpened
       else
         if @opened
           @close()
         else
           @open()
 
-  ready: ->
+  mounted: -> @$nextTick ->
     @processFixed()
 
   beforeDestory: ->

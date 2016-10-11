@@ -8,7 +8,12 @@ for the best user-experience when navigating your side, you can use a responsive
 # Install
 
 ```sh
-npm install --save-dev vue-side-nav vue-touch
+npm install --save-dev vue-side-nav
+// vue touch@next - not released on npm currently
+npm install --save-dev git://github.com/vuejs/vue-touch.git#next
+
+// vue@1.0
+npm install --save-dev vue-side-nav@1 vue-touch@1
 ```
 or include `build/bundle.js`.
 
@@ -42,8 +47,7 @@ fixed-screen-size | Number | 992 | Used with `fixed`. Above this size, the menu 
 not-dismissable | Boolean | false | A click on the overlay will not dismiss it
 close-on-click | Boolean | false | Any click within the side-nav will close it
 fixed | Boolean | false | should always show on large screens
-is-opened | Boolean | false | (two-way) opens or closes the side-nav
-is-fixed | Boolean | false | (two-way / read-only) true when fixed on large screen
+is-opened | Boolean | false | opens or closes the side-nav - use in conjuction with `toggled` event
 right | Boolean | false | attach to the right side instead of the left
 transition | Function | no-transition | will be called on open and close with `{el,style,cb}`.
 class | vue class | ["side-nav"] | class of the `ul`
@@ -61,8 +65,8 @@ before-enter | will be called before open animation
 after-enter |  will be called when opened
 before-leave |  will be called before close animation
 after-leave |  will be called when closed
-fixed(isFixed:Boolean) | emitted when menu get fixed or unfixed on large screen. Alternative to use two-way `is-fixed` prop
-toggled(isOpened:Boolean) | emitted when menu gets opened or closed. Alternative to use two-way `is-opened` prop
+fixed(isFixed:Boolean) | emitted when menu get fixed or unfixed on large screen.
+toggled(isOpened:Boolean) | emitted when menu gets opened or closed.
 
 #### Transition
 
@@ -88,7 +92,8 @@ The background is managed by `vue-overlay`.
 See [here](https://github.com/vue-comps/vue-overlay#overlayfadeelopacitycb) for an example on how to change its fading function.
 
 ## Changelog
--  
+- 2.0.0  
+now compatible with vue 2.0.0  
 close overlay on destroy  
 
 - 1.1.0  
