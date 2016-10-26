@@ -18,8 +18,8 @@
     button(@click="toggle" v-if="!isFixed") Toggle
     p(v-if="notFixedAndLeft") &lt;&lt; or drag
     p(v-if="notFixedAndRight" style="text-align:right") or drag  &gt;&gt;
-    p(v-if="!isFixed") Make window larger for the nav to stay opened
-    p(v-if="isFixed") Side-nav is fixed for this window-size. Make the window smaller for it to collapse.
+    p(v-if="fixedAndNotFixed") Make window larger for the nav to stay opened
+    p(v-if="fixedAndFixed") Side-nav is fixed for this window-size. Make the window smaller for it to collapse.
     a(
       href="https://github.com/vue-comps/vue-side-nav/blob/master/dev/basic.vue",
       style="position:relative;top:40px;left:200px"
@@ -38,6 +38,8 @@ module.exports =
   computed:
     notFixedAndLeft: -> !@isFixed and !@right
     notFixedAndRight: -> !@isFixed and @right
+    fixedAndNotFixed: -> @fixed and !@isFixed
+    fixedAndFixed: -> @fixed and @isFixed
   data: ->
     right: false
     fixed: false
