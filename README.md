@@ -1,3 +1,6 @@
+# DEPRECATED see [cerijs](https://github.com/cerijs) and [ceri-side-nav](https://github.com/ceri-comps/ceri-side-nav)
+
+
 # vue-side-nav
 
 for the best user-experience when navigating your side, you can use a responsive side-nav.
